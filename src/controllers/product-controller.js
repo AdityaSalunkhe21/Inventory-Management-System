@@ -1,0 +1,60 @@
+import { createProductService, getAllProductsService, getProductByIdService } from "../services/product-service.js";
+import { ApiError } from "../utils/ApiError.js";
+
+export const createProduct = async (req, res, next) => {
+    try {
+        const products = req.body;
+        
+        const productsArray = Array.isArray(products) ? products : [products];
+        
+        for (let i = 0; i < productsArray.length; i++) {
+            const { name, description, stock_quantity, low_stock_threshold } = productsArray[i];
+            
+            if (!name || !description) {
+                throw new ApiError(`Product ${i + 1}: Name and description are required`, 400);
+            }
+            
+            if (typeof name !== "string" || name.trim().length === 0) {
+                throw new ApiError(`Product ${i + 1}: Name must be a non-empty string`, 400);
+            }
+            
+            if (stock_quantity !== undefined && (isNaN(Number(stock_quantity)) || Number(stock_quantity) < 0)) {
+                throw new ApiError(`Product ${i + 1}: Invalid stock quantity`, 400);
+            }
+
+            if (low_stock_threshold !== undefined && (isNaN(Number(low_stock_threshold)) || Number(low_stock_threshold) < 0)) {
+                throw new ApiError(`Product ${i + 1}: Invalid low_stock_threshold`, 400);
+            }
+        }
+        
+        await createProductService(productsArray);
+
+        res.send("Product(s) created successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getAllProducts = async (req, res, next) => {
+    try {
+        const products = await getAllProductsService();
+        res.send(products);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getProductById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        if (id !== undefined && (isNaN(Number(id)) || Number(id) < 0)) {
+            throw new ApiError("Invalid product id", 400);
+        }
+
+        const product = await getProductByIdService(Number(id));
+        res.send(product);
+    } catch (error) {
+        next(error);
+    }
+}
