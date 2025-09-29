@@ -1,4 +1,10 @@
-import { createProductService, getAllProductsService, getProductByIdService } from "../services/product-service.js";
+import { 
+    createProductService, 
+    deleteProductByIdService, 
+    getAllProductsService, 
+    getProductByIdService, 
+    updateProductByIdService 
+} from "../services/product-service.js";
 import { ApiError } from "../utils/ApiError.js";
 
 export const createProduct = async (req, res, next) => {
@@ -54,6 +60,61 @@ export const getProductById = async (req, res, next) => {
 
         const product = await getProductByIdService(Number(id));
         res.send(product);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteProductById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        if (id !== undefined && (isNaN(Number(id)) || Number(id) < 0)) {
+            throw new ApiError("Invalid product id", 400);
+        }
+
+        await deleteProductByIdService(Number(id));
+        res.send("Product deleted successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const updateProductById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, description, low_stock_threshold } = req.body;
+
+        if (id === undefined || isNaN(Number(id)) || Number(id) < 0) {
+            throw new ApiError("Invalid product id", 400);
+        }
+
+        if (name !== undefined && (typeof name !== "string" || name.trim().length === 0)) {
+            throw new ApiError("Name must be a non-empty string", 400);
+        }
+
+        if (description !== undefined && (typeof description !== "string" || description.trim().length === 0)) {
+            throw new ApiError("Invalid description", 400);
+        }
+
+        if (
+            low_stock_threshold !== undefined &&
+            (isNaN(Number(low_stock_threshold)) || Number(low_stock_threshold) < 0)
+        ) {
+            throw new ApiError("Invalid low_stock_threshold", 400);
+        }
+
+        if (name === undefined && description === undefined && low_stock_threshold === undefined) {
+            throw new ApiError("No fields to update", 400);
+        }
+
+        const updatedProduct = await updateProductByIdService(Number(id), {
+            name,
+            description,
+            low_stock_threshold
+        });
+
+        res.send(updatedProduct);
     } catch (error) {
         next(error);
     }

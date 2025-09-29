@@ -16,6 +16,8 @@ app.get("/", (req, res) => {
             { method: "POST", path: "/products/create-products", description: "Create a new product" },
             { method: "GET", path: "/products/", description: "Get all products" },
             { method: "GET", path: "/products/:id", description: "Get product by ID" },
+            { method: "DELETE", path: "/products/:id", description: "Delete a product by ID" },
+            { method: "PATCH", path: "/products/:id", description: "Update product name, description, or low_stock_threshold" }
         ]
     });
 });
