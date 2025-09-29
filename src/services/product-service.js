@@ -57,3 +57,55 @@ export const getProductByIdService = async (id) => {
         throw new ApiError(`Error fetching product: ${error.message}`, 500);
     }
 }
+
+export const deleteProductByIdService = async (id) => {
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id: id }
+        });
+
+        if (!product) {
+            throw new ApiError("Product not found", 404);
+        }
+
+        await prisma.product.delete({
+            where: {
+                id: id
+            }
+        });
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(`Error deleting product: ${error.message}`, 500);
+    }
+}
+
+export const updateProductByIdService = async (id, product) => {
+    try {
+        const existingProduct = await prisma.product.findUnique({
+            where: { id: id }
+        });
+
+        if (!existingProduct) {
+            throw new ApiError("Product not found", 404);
+        }
+
+        const updatedProduct = await prisma.product.update({
+            where: { id: id },
+            data: product
+        });
+
+        return updatedProduct;
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        
+        if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
+            throw new ApiError("A product with this name already exists. Please choose a different name.", 409);
+        }
+        
+        throw new ApiError(`Error updating product: ${error.message}`, 500);
+    }
+}
