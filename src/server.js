@@ -11,7 +11,7 @@ app.use("/products", productRouter);
 
 app.get("/", (req, res) => {
     res.json({
-        message: "Welcome to Inventory Management API",
+        message: "Welcome to Investment Management API",
         routes: [
             { method: "POST", path: "/products/create-products", description: "Create a new product" },
             { method: "GET", path: "/products/", description: "Get all products" },
