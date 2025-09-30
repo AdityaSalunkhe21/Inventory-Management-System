@@ -5,7 +5,8 @@ import {
     getProductByIdService, 
     updateProductByIdService,
     increaseStockQuantityService,
-    decreaseStockQuantityService
+    decreaseStockQuantityService,
+    getLowStockProductsService
 } from "../services/product-service.js";
 import { ApiError } from "../utils/ApiError.js";
 
@@ -157,6 +158,15 @@ export const decreaseStockQuantity = async (req, res, next) => {
 
         const product = await decreaseStockQuantityService(Number(id), Number(quantity));
         res.send(product);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getLowStockProducts = async (req, res, next) => {
+    try {
+        const products = await getLowStockProductsService();
+        res.send(products);
     } catch (error) {
         next(error);
     }

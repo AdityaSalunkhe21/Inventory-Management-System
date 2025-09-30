@@ -6,13 +6,15 @@ import {
     getProductById, 
     updateProductById,
     increaseStockQuantity,
-    decreaseStockQuantity
+    decreaseStockQuantity,
+    getLowStockProducts
 } from "../controllers/product-controller.js";
 
 const productRouter = Router();
 
 productRouter.post("/create-products", createProduct);
 productRouter.get("/", getAllProducts);
+productRouter.get("/low-stock", getLowStockProducts);
 productRouter.get("/:id", getProductById);
 productRouter.delete("/:id", deleteProductById);
 productRouter.patch("/:id", updateProductById);
