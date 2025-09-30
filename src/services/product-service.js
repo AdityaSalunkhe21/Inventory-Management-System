@@ -163,3 +163,16 @@ export const decreaseStockQuantityService = async (id, quantity) => {
         throw new ApiError(`Error decreasing stock quantity: ${error.message}`, 500);
     }
 }
+
+export const getLowStockProductsService = async () => {
+    try {
+        const products = await prisma.$queryRaw`
+            SELECT * FROM Product 
+            WHERE stock_quantity < low_stock_threshold
+        `;
+
+        return products;
+    } catch (error) {
+        throw new ApiError(`Error fetching low stock products: ${error.message}`, 500);
+    }
+}
