@@ -109,3 +109,57 @@ export const updateProductByIdService = async (id, product) => {
         throw new ApiError(`Error updating product: ${error.message}`, 500);
     }
 }
+
+export const increaseStockQuantityService = async (id, quantity) => {
+    try {
+        const existingProduct = await prisma.product.findUnique({
+            where: { id: id }
+        });
+
+        if (!existingProduct) {
+            throw new ApiError("Product not found", 404);
+        }
+
+        const product = await prisma.product.update({
+            where: { id: id },
+            data: { stock_quantity: { increment: quantity } }
+        });
+
+        return product;
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(`Error increasing stock quantity: ${error.message}`, 500);
+    }
+}
+
+
+export const decreaseStockQuantityService = async (id, quantity) => {
+    try {
+
+        const existingProduct = await prisma.product.findUnique({
+            where: { id: id }
+        });
+
+        if (!existingProduct) {
+            throw new ApiError("Product not found", 404);
+        }
+
+        if (existingProduct.stock_quantity < quantity) {
+            throw new ApiError("Insufficient stock quantity", 400);
+        }
+
+        const product = await prisma.product.update({
+            where: { id: id },
+            data: { stock_quantity: { decrement: quantity } }
+        });
+
+        return product;
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(`Error decreasing stock quantity: ${error.message}`, 500);
+    }
+}

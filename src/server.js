@@ -17,7 +17,9 @@ app.get("/", (req, res) => {
             { method: "GET", path: "/products/", description: "Get all products" },
             { method: "GET", path: "/products/:id", description: "Get product by ID" },
             { method: "DELETE", path: "/products/:id", description: "Delete a product by ID" },
-            { method: "PATCH", path: "/products/:id", description: "Update product name, description, or low_stock_threshold" }
+            { method: "PATCH", path: "/products/:id", description: "Update product name, description, or low_stock_threshold" },
+            { method: "PATCH", path: "/products/:id/increase-stock", description: "Increase product stock by a given quantity (default 1)" },
+            { method: "PATCH", path: "/products/:id/decrease-stock", description: "Decrease product stock by a given quantity (default 1, cannot go below zero)" }
         ]
     });
 });
