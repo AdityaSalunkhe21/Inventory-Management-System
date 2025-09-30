@@ -4,7 +4,9 @@ import {
     deleteProductById, 
     getAllProducts, 
     getProductById, 
-    updateProductById 
+    updateProductById,
+    increaseStockQuantity,
+    decreaseStockQuantity
 } from "../controllers/product-controller.js";
 
 const productRouter = Router();
@@ -14,5 +16,7 @@ productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);
 productRouter.delete("/:id", deleteProductById);
 productRouter.patch("/:id", updateProductById);
+productRouter.patch("/:id/increase-stock", increaseStockQuantity);
+productRouter.patch("/:id/decrease-stock", decreaseStockQuantity);
 
 export default productRouter;

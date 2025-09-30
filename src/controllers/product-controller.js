@@ -3,7 +3,9 @@ import {
     deleteProductByIdService, 
     getAllProductsService, 
     getProductByIdService, 
-    updateProductByIdService 
+    updateProductByIdService,
+    increaseStockQuantityService,
+    decreaseStockQuantityService
 } from "../services/product-service.js";
 import { ApiError } from "../utils/ApiError.js";
 
@@ -115,6 +117,46 @@ export const updateProductById = async (req, res, next) => {
         });
 
         res.send(updatedProduct);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const increaseStockQuantity = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const quantity = req.body?.quantity ? Number(req.body.quantity) : 1;
+
+        if (id !== undefined && (isNaN(Number(id)) || Number(id) < 0)) {
+            throw new ApiError("Invalid product id", 400);
+        }
+
+        if (quantity !== undefined && (isNaN(Number(quantity)) || Number(quantity) < 0)) {
+            throw new ApiError("Invalid quantity", 400);
+        }
+
+        const product = await increaseStockQuantityService(Number(id), Number(quantity));
+        res.send(product);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const decreaseStockQuantity = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const quantity = req.body?.quantity ? Number(req.body.quantity) : 1;
+
+        if (id !== undefined && (isNaN(Number(id)) || Number(id) < 0)) {
+            throw new ApiError("Invalid product id", 400);
+        }
+
+        if (quantity !== undefined && (isNaN(Number(quantity)) || Number(quantity) < 0)) {
+            throw new ApiError("Invalid quantity", 400);
+        }
+
+        const product = await decreaseStockQuantityService(Number(id), Number(quantity));
+        res.send(product);
     } catch (error) {
         next(error);
     }
